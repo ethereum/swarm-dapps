@@ -8,6 +8,9 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand hidden-xs" href="" ng-click="fileNavigator.goTo(-1)">{{config.appName}}</a>
+      <button class="btn btn-default btn-sm newhash" ng-click="modal('newhash')" title="{{'browse_new_hash' | translate}}">
+          <i class="glyphicon glyphicon-random"></i>
+      </button>      
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <div class="navbar-form navbar-right">

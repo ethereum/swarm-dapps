@@ -318,6 +318,33 @@
                 });
             };
 
+            $scope.newHash = {
+                value: ''
+            };
+            $scope.browseNewHash = function () {
+                if (!$scope.newHash.value || !$scope.newHash.value.length) {
+                    return;
+                }
+                $scope.modal('newhash', true);
+                $scope.browseHash($scope.newHash.value);
+                $scope.newHash.value = '';
+            };
+            
+            $scope.browseHash = function(hash) {
+                $scope.swarmHash = $scope.apiMiddleware.apiHandler.swarmHash = hash;
+                $scope.fileNavigator.apiMiddleware.apiHandler.mainScope = $scope;
+                $scope.fileNavigator.apiMiddleware.apiHandler.downloadFullManifest($scope.swarmHash, null, function () {
+                    var paths = $scope.fileNavigator.apiMiddleware.apiHandler.fullManifest;
+                    $scope.swarmTreeFull = paths;
+                    $scope.swarmTree = $scope.fileNavigator.apiMiddleware.apiHandler.buildSwarmTree(paths);
+                    $scope.fileNavigator.refresh();
+                }, function(err) {
+                    setTimeout(function() {
+                        return $scope.modal('newhash');
+                    }, 1000);
+                });
+            }
+            
             $scope.addForUpload = function ($files) {
                 $scope.uploadFileList = $scope.uploadFileList.concat($files);
                 $scope.modal('uploadfile');
@@ -354,13 +381,6 @@
             $scope.changeLanguage(getQueryParam('lang'));
             $scope.isWindows = getQueryParam('server') === 'Windows';
 
-            $scope.swarmHash = $scope.apiMiddleware.apiHandler.swarmHash = window.location.hash.substring(2);
-            $scope.fileNavigator.apiMiddleware.apiHandler.mainScope = $scope;
-            $scope.fileNavigator.apiMiddleware.apiHandler.downloadFullManifest($scope.swarmHash, null, function () {
-                var paths = $scope.fileNavigator.apiMiddleware.apiHandler.fullManifest;
-                $scope.swarmTreeFull = paths;
-                $scope.swarmTree = $scope.fileNavigator.apiMiddleware.apiHandler.buildSwarmTree(paths);
-                $scope.fileNavigator.refresh();
-            });
+            $scope.browseHash(window.location.hash.substring(2));
         }]);
 })(angular, jQuery);

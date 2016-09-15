@@ -135,8 +135,6 @@
                     url = url.replace('/bzz:', '/proxy/bzz.php').replace('/bzzr:', '/proxy/bzzr.php');
                 }
 
-                console.log(url);
-
                 return url;
             };
 
@@ -516,7 +514,7 @@
                 return deferred.promise;
             };
 
-            ApiHandler.prototype.downloadFullManifest = function (hash, key, onFinally) {
+            ApiHandler.prototype.downloadFullManifest = function (hash, key, onFinally, onError) {
                 var self = this;
                 self.inprocess = true;
                 self.manifestQueue.push("lol");
@@ -541,6 +539,9 @@
                         }
                     });
                 }).error(function (data) {
+                    if (onError) {
+                        onError(data);
+                    }
                     //dfHandler(data, deferred, 'Unknown error listing, check the response');
                 })['finally'](function () {
                     self.manifestQueue.pop();

@@ -25,6 +25,10 @@ body {
   line-height: 100%;
 }
 
+.navbar button.newhash {
+    margin: 15px 0 0 5px;
+}
+
 .navbar .navbar-form {
   border-bottom: none;
   border-top: none;
