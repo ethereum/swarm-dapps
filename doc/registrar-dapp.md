@@ -3,7 +3,7 @@
 ### Introduction
 
 This document specifies a web-based đapp interface for ENS (Ethereum 
-Name Service) registrar contracts as described in EIP 137. Standardizing 
+Name Service) registrar contracts as defined in EIP 137. Standardizing 
 such interfaces is motivated by the expectation that numerous different 
 đapps might need to interact with the same registrar contract. In such a 
 case, having a spearate đapp implement all necessary user interactions 
@@ -24,16 +24,13 @@ registrar's đapp might direct the browser further (typically, back to the
 calling đapp), to addresses that might depend on whether the requested
 name registration succeeded or failed.
 
-The only required paremeter is the address to be registered. The query 
-parameter for this is `a`. All the other parameters are optional, listed
-in the table below:
+All query parameters are optional, listed in the table below:
 
 | Query parameter | Semantics |
 | --------------- | --------- |
 | `n` | Name to be registered. In its absense, the name should be inputed into the registrar đapp by the user. |
 | `r` | Return redirection URL in case of successful registration. In its absence, no redirection takes place, the successful registration is simply confirmed on the UI. |
 | `f` | Return redirection URL in case of failed or canceled registration. Defaults to that given in `r`. |
-| `a` | Address to be registered. Required parameter. |
 
 ### Binding between registrar and registrar đapp
 
