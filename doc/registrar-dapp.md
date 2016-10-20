@@ -46,9 +46,9 @@ facilitating (limited) forward compatibility.
 
 ### Binding between registrar and registrar đapp
 
-The most natural way to bind an interface đapp to a registrar contract 
-deployed for a particular ENS domain is to register it under a reserved
-name, such as `nic`, in the same domain. This allows for independent
+In order to bind an interface đapp to a registrar contract 
+deployed for a particular ENS domain, it must be registered under the reserved
+name `nic` in the same domain. This allows for independent
 upgrades for both the contract and the interface đapp, while providing a
 secure, block chain certified binding between the two.
 
