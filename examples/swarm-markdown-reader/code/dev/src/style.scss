@@ -1,0 +1,17 @@
+/*******************************
+ * [_style.scss]
+ * The core scss style sheet
+ ******************************/
+
+/**
+ * { Dependencies }
+ */
+//@import "styles/variables";
+
+// npm depencies
+//@import "~bootstrap/scss/bootstrap";
+//@import "~font-awesome/scss/font-awesome";
+
+// Project specific
+@import "styles/global";
+@import "styles/components";
