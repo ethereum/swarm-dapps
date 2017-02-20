@@ -1,0 +1,68 @@
+/* html, body {
+	height: 100vh !important;
+}
+
+#app, #cke_markdownEditor {
+	height: 100% !important;
+}
+
+.cke_inner {
+	height: 85% !important;
+} */
+
+.markdownEditorForm {
+	div {
+		position: relative;
+	}
+
+	padding: 2% 10% 0% 10%;
+	max-width: 1200px;
+	margin: 0 auto;
+
+	height: 100%;
+}
+
+#submitPost {
+	margin: 50px auto 0 auto;
+	display: block;
+	position : absolute;
+	left: 0;
+	bottom: 0;
+	z-index: 99999;
+}
+
+/* .markdownEditorForm__container {
+	margin: 0 auto;
+	width: 90vw;
+	height: 90vh;
+} */
+
+#cke_markdownEditor, .cke_bottom {
+	border: 0 !important;
+	box-shadow: none !important;
+	background: #FAFAFA !important;
+}
+
+.cke_button__submitpost{
+	display: inline;
+
+	.cke_button_icon {
+		display: none
+	}
+
+	.cke_button_label {
+		display: inline;
+		font-weight: bold;
+	}
+}
+
+.cke_button:hover, .cke_toolgroup:hover, .cke_button_label:hover, .cke_button_label:hover, .cke_combo_text:hover{
+	cursor: pointer !important;
+}
+
+.cke_top {
+	border-bottom: 1px solid grey;
+	box-shadow: none !important;
+	background: #FAFAFA !important;
+	padding:  6px 0px 2px !important;
+}

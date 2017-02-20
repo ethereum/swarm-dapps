@@ -1,0 +1,40 @@
+{
+	"name": "swarm-document-agent",
+	"version": "0.5.1",
+	"description": "Development environment for swarm-markdown-agent",
+	"keywords": [],
+	"author": "Dean Vaessen <hello@deanvaessen.com>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:username"
+	},
+	"config": {
+		"port": 3000
+	},
+	"scripts": {
+		"build": "npm run build-reader && npm run build-editor && npm run post-build",
+		"build-reader": "cd ./agent_modules/src/markdown-reader/dev/ && npm run build",
+		"build-editor": "cd ./agent_modules/src/markdown-editor/dev/ && npm run build",
+		"post-build": "node postbuildglue.js --exec babel-node --presets es2015,stage-2",
+		"install-all": "npm install && npm run install-reader-dev && npm run install-reader-build && npm run install-editor-dev && npm run install-editor-build",
+		"install-reader-dev": "cd ./agent_modules/src/markdown-reader/dev/ && npm install",
+		"install-reader-build": "cd ./agent_modules/src/markdown-reader/build/ && npm install",
+		"install-editor-dev": "cd ./agent_modules/src/markdown-editor/dev/ && npm install",
+		"install-editor-build": "cd ./agent_modules/src/markdown-editor/build/ && npm install"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"babel-cli": "^6.18.0",
+		"babel-core": "^6.10.4",
+		"babel-eslint": "^6.1.2",
+		"babel-loader": "^6.2.4",
+		"babel-plugin-transform-runtime": "^6.9.0",
+		"babel-preset-es2015": "^6.9.0",
+		"babel-preset-stage-2": "^6.11.0",
+		"fs": "0.0.1-security",
+		"ncp": "^2.0.0",
+		"webpack": "1.13.2",
+		"webpack-stream": "3.2.0"
+	}
+}
