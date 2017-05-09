@@ -4,7 +4,7 @@
 
 ### Outline ###
 
-In order to merge the libraries into one big project and keep their build environments and resulting javascript packages seperate, I had to use different build/development environments for each.
+In order to merge the libraries into one big project and keep their build environments and resulting javascript packages seperate, the build/development environments for each library are also separated.
 
 Here's an overview of the project as a whole and a quick summary of the two modules and how they relate to one another.
 
@@ -21,21 +21,32 @@ Here's an overview of the project as a whole and a quick summary of the two modu
 
 **For additional documentation, please see the respective folders of the modules!**
 
+<br />
+
 ### Files ####
-* Source files in ``./agent_modules/src/``
-* Built, ready to go optimised files for production in ``./agent_modules/dist/``
+* Source files in ``/src/agent_modules/``
+* Built, ready to go optimised files for production in ``/dist/``
 * While the src folders of the modules also contain the HTML files, use the HTML files in this root folder here as the ones in the src are only for testing the individual modules.
 
+<br />
+
 ### Runtime requirements ###
-None beyond a webserver or swarm instance.
+
+<br />
+
+None beyond a webserver.
+
+<br />
 
 ### How do I run this? ###
-Get the Javascript, HMTL, JSON configuration, and CSS files from ``./agent_modules/dist/``.
-If you are running a local swarm instance, you can deploy the application to swarm as follows:
-```
-$ swarm --recursive --defaultpath agent_modules/dist/read.html up agent_modules/dist
-```
+Get the Javascript, HMTL, JSON configuration, and CSS files from their respective folders.
+Run the HTML through a web server.
+
+index.html and edit.html in ``/dist/`` are configured to look for the libraries, extra styles and such in ``/dist/agent_modules/*libraryname*``
+
+<br />
 
 ### Building ####
-* Simply run ``npm run build`` in this folder (``npm run install-all`` for the first run in this folder before you do this) to run the build process of both submodules and copy the necessary files over to ``/agent_modules/dist/*libraryname*``. It will be compiled to ``/agent_modules/dist/*libraryname*``. Which is where the html also looks for the libraries. For building just the reader, run ``npm run build-reader``. For just the editor: ``npm run build-editor``.
-* You could also still compile from the sub modules if you want to, see their respective documentation. Note that the compiled will NOT be copied to ``/agent_modules/dist/*libraryname*`` if compiling from inside each sub project (library).
+* The very first time run ``npm run install-all`` in this folder to get dependencies installed
+* Simply run ``npm run build`` in this folder  to run the build process of both submodules and copy the necessary files over to ``/agent_modules/dist/*libraryname*``. It will be compiled to ``/agent_modules/dist/*libraryname*``. Which is where the html also looks for the libraries. For building just the reader, run ``npm run build-reader``. For just the editor: ``npm run build-editor``.
+* You could also still compile from the sub modules if you want to, see their respective documentation. Note that the compiled will NOT be copied to ``/dist/agent_modules/*libraryname*`` if compiling from inside each sub project.

@@ -1,0 +1,32 @@
+.errorText {
+	color: red;
+	text-align: center;
+
+	ul {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	a {
+		text-decoration: none;
+		font-style: italic;
+		color: red;
+	}
+}
+
+#editPost {
+	margin-top: 40px;
+}
+
+.hidden {
+	display: none;
+}
+
+// Override d-app styles
+::selection {
+  background-color: #3297FD  !important; /* WebKit/Blink Browsers */
+}
+::-moz-selection {
+  background-color: #3399FF !important; /* Gecko Browsers */
+}
