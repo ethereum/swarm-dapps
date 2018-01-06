@@ -12,6 +12,7 @@ var thumbrt = 16 / 9 - 5 / 3;
 var cutrt = 0.15;
 var toggleSelect = false;
 var isSelectAllPhotos = false;
+var uploadFileForm = "<input type=\"file\" id=\"fileElem\" multiple accept=\"image/*\" style=\"display:none\" onchange=\"handleFiles(this.files)\">{0}";
 
 Element.Events.hashchange =
     {
@@ -285,7 +286,6 @@ function getMultiDelete() {
 }
 
 function deleteImg(items) {
-    if (imgs.data.length < 2) return; // empty albums not allowed
     var index = eidx;
 
     if (Array.isArray(items)) {
@@ -375,11 +375,10 @@ function onMainReady() {
         dsc.push("<a title=\"Back to index\" href=\"" + encodeURI(imgs.index) + "\"><img src=\"back.png\"/></a>");
 
     // delete image
-    if (imgs.data.length > 1)
-        dsc.push("<a title=\"Delete image\" onclick=\"deleteImg(getMultiDelete())\"><img src=\"delete.png\"/></a>");
+    dsc.push("<a title=\"Delete image\" onclick=\"deleteImg(getMultiDelete())\"><img src=\"delete.png\"/></a>");
 
     // add image
-    dsc.push("<input type=\"file\" id=\"fileElem\" multiple accept=\"image/*\" style=\"display:none\" onchange=\"handleFiles(this.files)\"><a href=\"#\" id=\"fileSelect\"><img src=\"add.png\"></a>");
+    dsc.push(uploadFileForm.replace("{0}", "<a href=\"#\" id=\"fileSelect\"><img src=\"add.png\"></a>"));
 
     // up image
     if (eidx > 0)
@@ -607,63 +606,66 @@ function initGallery(data) {
             }
         });
     eflash.inject(econt);
+    if (imgs.data.length > 0) {
+        eleft = new Element('a', {id: 'left'});
+        eleft.adopt((new Element('div')).adopt(new Element('img', {'src': 'left.png'})));
+        eleft.inject(econt);
 
-    eleft = new Element('a', {id: 'left'});
-    eleft.adopt((new Element('div')).adopt(new Element('img', {'src': 'left.png'})));
-    eleft.inject(econt);
+        eright = new Element('a', {id: 'right'});
+        eright.adopt((new Element('div')).adopt(new Element('img', {'src': 'right.png'})));
+        eright.inject(econt);
 
-    eright = new Element('a', {id: 'right'});
-    eright.adopt((new Element('div')).adopt(new Element('img', {'src': 'right.png'})));
-    eright.inject(econt);
+        ehdr = new Element('div', {id: 'header'});
+        ehdr.inject(econt);
+    }
 
-    ehdr = new Element('div', {id: 'header'});
-    ehdr.inject(econt);
+    if (imgs.data.length > 0) {
+        elist = new Element('div', {id: 'list'});
+        elist.inject(emain);
 
-    elist = new Element('div', {id: 'list'});
-    elist.inject(emain);
+        var selectMenu = new Element('div', {id: 'select-menu'});
+        selectMenu.set('html', '<div style="background-color: rgba(0, 0, 0, 0.7); padding: 8px 8px 4px 8px; margin: -9px 0 8px -8px; max-width: 100px; display: inline-block">' +
+            '<a onclick="enableMultiselect(!toggleSelect); return false;" href="#">' +
+            '<img width="16" src="images/select.png">' +
+            '</a> ' +
+            '<span id="select-all" style="display: none">' +
+            '<a onclick="selectAllPhotos(!isSelectAllPhotos); return false;" href="#" style="margin-left: 4px">' +
+            '<img width="16" src="images/select-all.png">' +
+            '</a>' +
+            '</span>' +
+            '</div>');
+        elist.append(selectMenu);
 
-    var selectMenu = new Element('div', {id: 'select-menu'});
-    selectMenu.set('html', '<div style="background-color: rgba(0, 0, 0, 0.7); padding: 8px 8px 4px 8px; margin: -9px 0 8px -8px; max-width: 100px; display: inline-block">' +
-        '<a onclick="enableMultiselect(!toggleSelect); return false;" href="#">' +
-        '<img width="16" src="images/select.png">' +
-        '</a> ' +
-        '<span id="select-all" style="display: none">' +
-        '<a onclick="selectAllPhotos(!isSelectAllPhotos); return false;" href="#" style="margin-left: 4px">' +
-        '<img width="16" src="images/select-all.png">' +
-        '</a>' +
-        '</span>' +
-        '</div>');
-    elist.append(selectMenu);
+        imgs.data.each(function (x, i) {
+            var checkbox = new Element('input', {
+                'type': 'checkbox',
+                'class': 'image-checkbox',
+                'data-id': i,
+                'style': 'display: none'
+            });
+            var ethumb = new Element('div', {'class': 'thumb'});
+            x.ethumb = ethumb;
 
-    imgs.data.each(function (x, i) {
-        var checkbox = new Element('input', {
-            'type': 'checkbox',
-            'class': 'image-checkbox',
-            'data-id': i,
-            'style': 'display: none'
+            var a = new Element('a');
+            a.addEvent('click', function () {
+                switchTo(i);
+            });
+            a.href = "#" + i;
+
+            var img = new Element('div', {'class': 'img'});
+            x.eimg = img;
+            img.inject(a);
+
+            var ovr = new Element('div', {'class': 'ovr'});
+            ovr.inject(a);
+
+            a.inject(ethumb);
+            checkbox.inject(ovr);
+
+            ethumb.inject(elist);
+            elist.appendText("\n");
         });
-        var ethumb = new Element('div', {'class': 'thumb'});
-        x.ethumb = ethumb;
-
-        var a = new Element('a');
-        a.addEvent('click', function () {
-            switchTo(i);
-        });
-        a.href = "#" + i;
-
-        var img = new Element('div', {'class': 'img'});
-        x.eimg = img;
-        img.inject(a);
-
-        var ovr = new Element('div', {'class': 'ovr'});
-        ovr.inject(a);
-
-        a.inject(ethumb);
-        checkbox.inject(ovr);
-
-        ethumb.inject(elist);
-        elist.appendText("\n");
-    });
+    }
 
     emain.setStyles(
         {
@@ -673,82 +675,94 @@ function initGallery(data) {
             'min-height': imgs.thumb.min[1] + padding * 2
         });
 
-    // events and navigation shortcuts
-    eleft.addEvent('click', prev);
-    eright.addEvent('click', next);
-    window.addEvent('resize', resize);
-    window.addEvent('hashchange', change);
+    if (imgs.data.length > 0) {
+        // events and navigation shortcuts
+        eleft.addEvent('click', prev);
+        eright.addEvent('click', next);
+        window.addEvent('resize', resize);
+        window.addEvent('hashchange', change);
 
-    window.addEvent('keydown', function (ev) {
-        if (ev.key == 'up' || ev.key == 'left') {
-            ev.stop();
-            prev();
-        }
-        else if (ev.key == 'down' || ev.key == 'right' || ev.key == 'space') {
-            ev.stop();
-            next();
-        }
-    });
-
-    econt.addEvent('mousewheel', function (ev) {
-        if (ev.alt || ev.control || ev.meta || ev.shift)
-            return;
-
-        ev.stop();
-        if (ev.wheel > 0)
-            prev();
-        else
-            next();
-    });
-
-    new MooSwipe(econt,
-        {
-            onSwipeleft: next,
-            onSwipedown: next,
-            onSwiperight: prev,
-            onSwipeup: prev
+        window.addEvent('keydown', function (ev) {
+            if (ev.key == 'up' || ev.key == 'left') {
+                ev.stop();
+                prev();
+            }
+            else if (ev.key == 'down' || ev.key == 'right' || ev.key == 'space') {
+                ev.stop();
+                next();
+            }
         });
 
-    // setup an idle callback for mouse movement only
-    var idleTmp = new IdleTimer(window, {
-        timeout: hidedelay,
-        events: ['mousemove', 'mousedown', 'mousewheel']
-    }).start();
-    idleTmp.addEvent('idle', hideNav);
-    idleTmp.addEvent('active', function () {
-        showNav();
-        showHdr();
-    });
+        econt.addEvent('mousewheel', function (ev) {
+            if (ev.alt || ev.control || ev.meta || ev.shift)
+                return;
 
-    // general idle callback
-    idle = new IdleTimer(window, {timeout: hidedelay}).start();
-    idle.addEvent('idle', hideHdr);
+            ev.stop();
+            if (ev.wheel > 0)
+                prev();
+            else
+                next();
+        });
 
-    // prepare first image
-    first = getLocationIndex();
-    resize();
-    load(first);
-    centerThumb(0);
-    if (imgs.name) document.title = imgs.name;
+        new MooSwipe(econt,
+            {
+                onSwipeleft: next,
+                onSwipedown: next,
+                onSwiperight: prev,
+                onSwipeup: prev
+            });
 
-    // setup thumbnail loading sequence
-    mthumbs = [];
-    if (first < 5) {
-        // optimize common initial case (viewing from the beginning)
-        for (var i = 0; i != imgs.data.length; ++i)
-            mthumbs.push(i);
+        // setup an idle callback for mouse movement only
+        var idleTmp = new IdleTimer(window, {
+            timeout: hidedelay,
+            events: ['mousemove', 'mousedown', 'mousewheel']
+        }).start();
+        idleTmp.addEvent('idle', hideNav);
+        idleTmp.addEvent('active', function () {
+            showNav();
+            showHdr();
+        });
+
+        // general idle callback
+        idle = new IdleTimer(window, {timeout: hidedelay}).start();
+        idle.addEvent('idle', hideHdr);
+
+        if (imgs.data.length > 0) {
+            // prepare first image
+            first = getLocationIndex();
+            resize();
+            load(first);
+            centerThumb(0);
+            if (imgs.name) document.title = imgs.name;
+
+            // setup thumbnail loading sequence
+            mthumbs = [];
+            if (first < 5) {
+                // optimize common initial case (viewing from the beginning)
+                for (var i = 0; i != imgs.data.length; ++i)
+                    mthumbs.push(i);
+            }
+            else for (var i = 0; i != imgs.data.length; ++i) {
+                // distance from current
+                var d = (i / 2 >> 0);
+                var k = first + (i % 2 ? d + 1 : -d);
+                if (k < 0)
+                    k = imgs.data.length + k;
+                else if (k >= imgs.data.length)
+                    k = k - imgs.data.length;
+                mthumbs.push(k);
+            }
+
+            loadNextThumb();
+        }
+    } else {
+        var uploadPhoto = new Element('div', {
+            'style': 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);'
+        });
+        uploadPhoto.set('html', uploadFileForm.replace("{0}", "<a href=\"#\" id=\"fileSelect\" class='upload-button'>Select photo(s) from your computer</a>"));
+        uploadPhoto.inject(emain);
+        jqueryInit();
     }
-    else for (var i = 0; i != imgs.data.length; ++i) {
-        // distance from current
-        var d = (i / 2 >> 0);
-        var k = first + (i % 2 ? d + 1 : -d);
-        if (k < 0)
-            k = imgs.data.length + k;
-        else if (k >= imgs.data.length)
-            k = k - imgs.data.length;
-        mthumbs.push(k);
-    }
-    loadNextThumb();
 
     emain.setStyle('visibility', 'visible');
 }
