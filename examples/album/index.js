@@ -388,15 +388,18 @@ function onMainReady() {
     if (eidx < imgs.data.length - 1)
         dsc.push("<a title=\"Move down\" onclick=\"moveDown()\"><img src=\"down.png\"/></a>");
 
-    if (imgs.data[eidx].img) {
-        var img = imgs.data[eidx].img[0];
-        dsc.push("<a title=\"Download image\" href=\"" + imgs.data[eidx].img[0] + "\"><img src=\"eye.png\"/></a>");
-        eimg.addEvent('click', function () {
-            window.location = img;
-        });
-        eimg.setStyle('cursor', 'pointer'); // fallback
-        eimg.setStyle('cursor', 'zoom-in');
+    if (!toggleSelect) {
+        if (imgs.data[eidx].img) {
+            var img = imgs.data[eidx].img[0];
+            dsc.push("<a id='download-image' title=\"Download image\" href=\"" + imgs.data[eidx].img[0] + "\"><img src=\"eye.png\"/></a>");
+            eimg.addEvent('click', function () {
+                window.location = img;
+            });
+            eimg.setStyle('cursor', 'pointer'); // fallback
+            eimg.setStyle('cursor', 'zoom-in');
+        }
     }
+
     if (imgs.download)
         dsc.push("<a title=\"Download album\" href=\"" + encodeURI(imgs.download) + "\"><img src=\"download.png\"/></a>");
     if (imgs.data[eidx].date)
@@ -785,6 +788,10 @@ function enableMultiselect(isEnable) {
     toggleSelect = isEnable;
     var checkboxes = document.querySelectorAll('.image-checkbox');
     document.getElementById('select-all').style.display = isEnable ? 'inline' : 'none';
+    if (document.getElementById('download-image')) {
+        document.getElementById('download-image').style.display = isEnable ? 'none' : 'inline';
+    }
+
     if (isEnable) {
         isSelectAllPhotos = false;
         checkboxes.forEach(function (item) {
