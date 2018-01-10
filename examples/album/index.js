@@ -388,9 +388,9 @@ function onMainReady() {
     if (eidx < imgs.data.length - 1)
         dsc.push("<a title=\"Move down\" onclick=\"moveDown()\"><img src=\"down.png\"/></a>");
 
-    if (imgs.data[eidx].file) {
-        var img = imgs.data[eidx].file[0];
-        dsc.push("<a title=\"Download image\" href=\"" + encodeURI(img) + "\"><img src=\"eye.png\"/></a>");
+    if (imgs.data[eidx].img) {
+        var img = imgs.data[eidx].img[0];
+        dsc.push("<a title=\"Download image\" href=\"" + imgs.data[eidx].img[0] + "\"><img src=\"eye.png\"/></a>");
         eimg.addEvent('click', function () {
             window.location = img;
         });
