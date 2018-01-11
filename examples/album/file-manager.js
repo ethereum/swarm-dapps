@@ -17,18 +17,17 @@ function uploadFile(files, nr, uri) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            var newHash = xhr.responseText;
-            console.log("New hash - " + newHash);
-            if (newHash.length != 64) {
-                // something wrong
-                console.log("Something wrong on uploading");
-                alert('Oh, error on PUT file to BZZ. See log for more information.');
+            var swarmHash = xhr.responseText;
+            try {
+                checkSwarmHash(swarmHash);
+            } catch (e) {
+                alert('Incorrect SWARM hash');
 
                 return;
             }
 
-            insertImage(files, nr, newHash, currentFile.name, function () {
-                uploadFile(files, nr + 1, "/bzz:/" + newHash + "/");
+            insertImage(files, nr, swarmHash, currentFile.name, function () {
+                uploadFile(files, nr + 1, "/bzz:/" + swarmHash + "/");
             });
         }
     };
@@ -38,6 +37,17 @@ function uploadFile(files, nr, uri) {
     readFile(currentFile, function (result) {
         xhr.send(result);
     });
+}
+
+function isCorrectSwarmHash(hash) {
+    return hash && hash.length === 64;
+}
+
+function checkSwarmHash(hash) {
+    if (!isCorrectSwarmHash(hash)) {
+        console.log(hash);
+        throw new Error('Incorrect SWARM hash');
+    }
 }
 
 function readFile(file, onComplete) {
@@ -102,8 +112,16 @@ function onUploadingComplete(uri) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            var i = xhr.responseText;
-            window.location = "/bzz:/" + i + "/" + window.location.hash;
+            var swarmHash = xhr.responseText;
+            try {
+                checkSwarmHash(swarmHash);
+            } catch (e) {
+                alert('Incorrect SWARM hash');
+
+                return;
+            }
+
+            window.location = "/bzz:/" + swarmHash + "/" + window.location.hash;
         }
     };
     sendImages(xhr, uri);
@@ -122,7 +140,6 @@ function sendImages(xhr, uri) {
     xhr.send(JSON.stringify(imgs));
 }
 
-// do it because I love jQuery
 function jqueryInit() {
     // setup upload file selector
     var fileElem = jQuery("#fileElem");

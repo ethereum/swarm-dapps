@@ -307,13 +307,29 @@ function deleteImg(items) {
     // set response handler
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            var i = xhr.responseText;
+            var swarmHash = xhr.responseText;
+            try {
+                checkSwarmHash(swarmHash);
+            } catch (e) {
+                alert('Incorrect SWARM hash');
+
+                return;
+            }
+
             var xhrd = new XMLHttpRequest();
             if (!Array.isArray(items) || (Array.isArray(items) && items.length === 0)) {
                 xhrd.onreadystatechange = function () {
                     if (xhrd.readyState === 4) {
-                        var j = xhrd.responseText;
-                        window.location = "/bzz:/" + j + "/" + window.location.hash;
+                        var swarmHash = xhrd.responseText;
+                        try {
+                            checkSwarmHash(swarmHash);
+                        } catch (e) {
+                            alert('Incorrect SWARM hash');
+
+                            return;
+                        }
+
+                        window.location = "/bzz:/" + swarmHash + "/" + window.location.hash;
                     }
                 };
             } else {
@@ -322,7 +338,7 @@ function deleteImg(items) {
                 };
             }
 
-            xhrd.open("DELETE", "/bzz%3A/" + i + "/" + fname, true);
+            xhrd.open("DELETE", "/bzz%3A/" + swarmHash + "/" + fname, true);
             xhrd.send();
 
             if (Array.isArray(items)) {
@@ -348,8 +364,16 @@ function moveUpDown(off) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            var i = xhr.responseText;
-            window.location.replace("/bzz:/" + i + "/#" + (eidx + off));
+            var swarmHash = xhr.responseText;
+            try {
+                checkSwarmHash(swarmHash);
+            } catch (e) {
+                alert('Incorrect SWARM hash');
+
+                return;
+            }
+
+            window.location.replace("/bzz:/" + swarmHash + "/#" + (eidx + off));
         }
     };
     sendImages(xhr, "");
