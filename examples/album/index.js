@@ -285,7 +285,7 @@ function getMultiDelete() {
     }
 }
 
-function deleteImg(items) {
+function deleteImg(items, swarmHash) {
     var index = eidx;
 
     if (Array.isArray(items)) {
@@ -334,20 +334,30 @@ function deleteImg(items) {
                 };
             } else {
                 xhrd.onreadystatechange = function () {
+                    if (xhrd.readyState === 4) {
+                        var swarmHash = xhrd.responseText;
+                        try {
+                            checkSwarmHash(swarmHash);
+                        } catch (e) {
+                            alert('Incorrect SWARM hash');
 
+                            return;
+                        }
+
+                        if (Array.isArray(items)) {
+                            deleteImg(items, swarmHash);
+                        }
+                    }
                 };
             }
 
-            xhrd.open("DELETE", "/bzz%3A/" + swarmHash + "/" + fname, true);
+            var deleteUrl = "/bzz:/" + swarmHash + "/" + fname;
+            xhrd.open("DELETE", deleteUrl, true);
             xhrd.send();
-
-            if (Array.isArray(items)) {
-                deleteImg(items);
-            }
         }
     };
 
-    sendImages(xhr, "");
+    sendImages(xhr, swarmHash ? "/bzz:/" + swarmHash + "/" : "");
 }
 
 function moveUpDown(off) {
