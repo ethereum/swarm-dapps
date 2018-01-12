@@ -1,6 +1,6 @@
 function uploadFile(files, nr, uri) {
     // when uploading complete - redirect to new address
-    if (files.length <= nr) {
+    if (nr < 0) {
         if (uri != "") {
             onUploadingComplete(uri);
         }
@@ -10,25 +10,25 @@ function uploadFile(files, nr, uri) {
 
     var currentFile = files[nr];
     if (isNotImage(currentFile.type)) {
-        uploadFile(files, nr + 1, uri);
+        uploadFile(files, nr - 1, uri);
+
         return;
     }
 
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            var newHash = xhr.responseText;
-            console.log("New hash - " + newHash);
-            if (newHash.length != 64) {
-                // something wrong
-                console.log("Something wrong on uploading");
-                alert('Oh, error on PUT file to BZZ. See log for more information.');
+            var swarmHash = xhr.responseText;
+            try {
+                checkSwarmHash(swarmHash);
+            } catch (e) {
+                alert('Incorrect SWARM hash');
 
                 return;
             }
 
-            insertImage(files, nr, newHash, currentFile.name, function () {
-                uploadFile(files, nr + 1, "/bzz:/" + newHash + "/");
+            insertImage(files, nr, swarmHash, currentFile.name, function () {
+                uploadFile(files, nr - 1, "/bzz:/" + swarmHash + "/");
             });
         }
     };
@@ -38,6 +38,17 @@ function uploadFile(files, nr, uri) {
     readFile(currentFile, function (result) {
         xhr.send(result);
     });
+}
+
+function isCorrectSwarmHash(hash) {
+    return hash && hash.length === 64;
+}
+
+function checkSwarmHash(hash) {
+    if (!isCorrectSwarmHash(hash)) {
+        console.log(hash);
+        throw new Error('Incorrect SWARM hash');
+    }
 }
 
 function readFile(file, onComplete) {
@@ -78,7 +89,7 @@ function insertImage(files, nr, newHash, fileName, onComplete) {
         var imgData = [];
         imgData[0] = "imgs/" + fileName;
         imgData[1] = [img.naturalWidth, img.naturalHeight];
-        imgs.data.splice(eidx, 0, {img: imgData, thumb: thumbData, blur: blur});
+        imgs.data.splice(eidx + 1, 0, {img: imgData, thumb: thumbData, blur: blur});
         if (onComplete) {
             onComplete();
         }
@@ -102,8 +113,16 @@ function onUploadingComplete(uri) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            var i = xhr.responseText;
-            window.location = "/bzz:/" + i + "/" + window.location.hash;
+            var swarmHash = xhr.responseText;
+            try {
+                checkSwarmHash(swarmHash);
+            } catch (e) {
+                alert('Incorrect SWARM hash');
+
+                return;
+            }
+
+            window.location = "/bzz:/" + swarmHash + "/" + window.location.hash;
         }
     };
     sendImages(xhr, uri);
@@ -111,7 +130,7 @@ function onUploadingComplete(uri) {
 
 function handleFiles(files) {
     showModal('Uploading photos..');
-    uploadFile(files, 0, "");
+    uploadFile(files, files.length - 1, "");
 }
 
 function sendImages(xhr, uri) {
@@ -122,7 +141,6 @@ function sendImages(xhr, uri) {
     xhr.send(JSON.stringify(imgs));
 }
 
-// do it because I love jQuery
 function jqueryInit() {
     // setup upload file selector
     var fileElem = jQuery("#fileElem");
