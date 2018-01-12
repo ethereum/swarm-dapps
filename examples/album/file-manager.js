@@ -1,6 +1,6 @@
 function uploadFile(files, nr, uri) {
     // when uploading complete - redirect to new address
-    if (files.length <= nr) {
+    if (nr < 0) {
         if (uri != "") {
             onUploadingComplete(uri);
         }
@@ -10,7 +10,8 @@ function uploadFile(files, nr, uri) {
 
     var currentFile = files[nr];
     if (isNotImage(currentFile.type)) {
-        uploadFile(files, nr + 1, uri);
+        uploadFile(files, nr - 1, uri);
+
         return;
     }
 
@@ -27,7 +28,7 @@ function uploadFile(files, nr, uri) {
             }
 
             insertImage(files, nr, swarmHash, currentFile.name, function () {
-                uploadFile(files, nr + 1, "/bzz:/" + swarmHash + "/");
+                uploadFile(files, nr - 1, "/bzz:/" + swarmHash + "/");
             });
         }
     };
@@ -88,7 +89,7 @@ function insertImage(files, nr, newHash, fileName, onComplete) {
         var imgData = [];
         imgData[0] = "imgs/" + fileName;
         imgData[1] = [img.naturalWidth, img.naturalHeight];
-        imgs.data.splice(eidx, 0, {img: imgData, thumb: thumbData, blur: blur});
+        imgs.data.splice(eidx + 1, 0, {img: imgData, thumb: thumbData, blur: blur});
         if (onComplete) {
             onComplete();
         }
@@ -129,7 +130,7 @@ function onUploadingComplete(uri) {
 
 function handleFiles(files) {
     showModal('Uploading photos..');
-    uploadFile(files, 0, "");
+    uploadFile(files, files.length - 1, "");
 }
 
 function sendImages(xhr, uri) {
