@@ -23,9 +23,9 @@ proxy server (see below)
 npm install live-server
 ```
 
-Now run `./start-proxy <folder>`. For example, to run the filemanager:
+Now run `./start-proxy.js <folder>`. For example, to run the filemanager:
 
 ```shell
-./start-proxy ./examples/filemanager
+./start-proxy.js ./examples/filemanager
 ```
 
