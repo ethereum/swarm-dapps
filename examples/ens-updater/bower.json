@@ -1,0 +1,20 @@
+{
+  "name": "ens-updater",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "shadurin <igor.shadurin@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/IgorShadurin/swarm-dapps",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "web3": "^0.19.0"
+  }
+}

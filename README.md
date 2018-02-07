@@ -10,6 +10,9 @@ A photo album dapp with a set of public-domain photographs that lets users uploa
 ### examples/filemanager
 This is a GUI explorer for file collections hosted on swarm. An example of a tool for working on file collections other than itself. The root hash of the explorer remains the same (or changes with upgrades); the root hash of the explored collection is appended as a fragment to the URI. Of course, it can be used to explore itself.
 
+### examples/ens-updater
+This is a GUI tool for updating ENS domain with SWARM hash.
+
 ### examples/bzzhandler.html
 
 This html installs http protocol handlers for bzz, bzzi and bzzr protocols.
