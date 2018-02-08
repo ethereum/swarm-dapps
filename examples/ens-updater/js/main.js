@@ -20,7 +20,7 @@ function init() {
 
     console.log(web3);
     publicResolverInterval = setInterval(function () {
-        if (publicResolver) {
+        if (publicResolver && publicResolver.address) {
             clearInterval(publicResolverInterval);
             $('#saveDomainHash').removeClass('disabled');
         }
