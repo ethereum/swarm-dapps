@@ -1,33 +1,30 @@
-var web3js = null;
+var publicResolverInterval = null;
+
 $(document).ready(function () {
     init();
     receiveInputData();
 });
+
+if (typeof web3 !== 'undefined') {
+    window.web3 = new Web3(web3.currentProvider);
+    console.log('current provider');
+    console.log(web3.currentProvider);
+} else {
+    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+}
 
 function init() {
     $('#saveDomainHash').on('click', function () {
         saveDomainHash();
     });
 
-    if (typeof web3 !== 'undefined') {
-        web3js = new Web3(web3.currentProvider);
-    } else {
-        web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-    }
-
-    //web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-    //web3js = new Web3();
-    //console.log(web3.currentProvider);
-    //web3js.setProvider(web3.currentProvider);
-    console.log(web3js);
-    /*console.log(Web3);
-     console.log(window.web3);*/
-    web3js.eth.getBalance('0xFb08943D0a9F69A1c998C54046c7C5A851405782', function (err, data) {
-        console.log(err);
-        alert(err);
-        console.log(data);
-        alert(data);
-    });
+    console.log(web3);
+    publicResolverInterval = setInterval(function () {
+        if (publicResolver) {
+            clearInterval(publicResolverInterval);
+            $('#saveDomainHash').removeClass('disabled');
+        }
+    }, 1000);
 }
 
 function receiveInputData() {
@@ -41,7 +38,7 @@ function receiveInputData() {
             swarmHash = hash[1];
 
             if (!isCorrectDomain(ensDomain) || !isCorrectSwarmHash(swarmHash)) {
-                alert('Passed incorrect domain or hash');
+                alert('Invalid domain or hash received');
 
                 return;
             }
@@ -65,6 +62,15 @@ function isCorrectSwarmHash(hash) {
 }
 
 function saveDomainHash() {
+    // theswarm.eth (namehash: 0x1f680e87e69e17c46be80a707cce1b86d726a716a671b540cb13eb57562c17c2) => resolver: 0x1da022710df5002339274aadee8d58218e9d6ab5 => content: 0x2c2d2adb8fd0cba399282fb59f8219e5fbbd67ba06fcf5c8d343f5eb1c8be022
+    /*getContent('theswarm.eth', function (error, result) {
+     if (error) {
+     console.error('public resolver error: ' + error);
+     }
+
+     console.log('public resolver result: ' + result);
+     });*/
+
     var ensDomain = $('#ensDomain').val();
     var swarmHash = $('#swarmHash').val();
 
@@ -73,5 +79,37 @@ function saveDomainHash() {
 
         return;
     }
-    // todo send transaction to blockchain
+
+    getResolverContract(ensDomain, function (error, result) {
+        if (error) {
+            console.error('Empty resolver contract: ' + error);
+        }
+
+        console.log(result);
+        if (error || !result) {
+
+            alert('Resolver contract is empty. Try set up contract before changing content');
+        } else {
+            var domainNamehash = namehash(ensDomain);
+            result.setContent(domainNamehash, swarmHash, function (error, result) {
+                if (error) {
+                    alert('Transaction rejected');
+                    console.error(error);
+
+                    return;
+                }
+
+                if (result) {
+                    alert('Transaction complete. View transaction on Etherscan: <a href="https://etherscan.io/tx/' + result + '" target="_blank">' + result + '</a>');
+
+                    console.log(result);
+                }
+            });
+        }
+    });
+}
+
+function alert(message) {
+    $('#messageBody').html(message);
+    $('#messageModal').modal('show');
 }

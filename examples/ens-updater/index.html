@@ -63,7 +63,7 @@
                     </form>
 
                     <p>
-                        <a id="saveDomainHash" class="btn btn-success btn-lg float-right" href="#" role="button">Save</a>
+                        <a id="saveDomainHash" class="btn btn-success btn-lg float-right disabled" href="#" role="button" disabled="disabled">Save</a>
                     </p>
                 </div>
                 <div class="col-sm-2"></div>
@@ -72,6 +72,26 @@
     </div>
     <hr>
 </main>
+
+<!-- Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="messageBody" class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <footer class="container">
 
@@ -83,7 +103,8 @@
 <script src="bower_components/web3/dist/web3.js"></script>
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
 <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="js/ens.js"></script>
+<!--<script src="js/ens.js"></script>-->
 <script src="js/main.js"></script>
+<script src="js/ensutils.js"></script>
 </body>
 </html>
