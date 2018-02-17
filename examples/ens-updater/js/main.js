@@ -1,29 +1,46 @@
 var publicResolverInterval = null;
+var currentNetworkTitle = null;
 
 $(document).ready(function () {
     init();
     receiveInputData();
 });
 
-if (typeof web3 !== 'undefined') {
-    window.web3 = new Web3(web3.currentProvider);
-    console.log('current provider');
-    console.log(web3.currentProvider);
-} else {
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-}
-
 function init() {
+    if (typeof web3 !== 'undefined') {
+        window.web3 = new Web3(web3.currentProvider);
+        console.log('current provider');
+        console.log(web3.currentProvider);
+    } else {
+        window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
+
+    console.log(web3);
+    web3.version.getNetwork(function (error, result) {
+        if (error) {
+            console.error(error);
+
+            return;
+        }
+
+        var networkId = result;
+        console.log('Network id: ' + networkId);
+        currentNetworkTitle = networkName[networkId];
+        initEns(registryAddresses[networkId]);
+    });
+
+
     $('#saveDomainHash').on('click', function () {
         saveDomainHash();
     });
 
-    console.log(web3);
     publicResolverInterval = setInterval(function () {
-        if (publicResolver && publicResolver.address) {
-            clearInterval(publicResolverInterval);
-            $('#saveDomainHash').removeClass('disabled');
-        }
+        /*if (publicResolver && publicResolver.address) {
+         clearInterval(publicResolverInterval);
+         $('#saveDomainHash').removeClass('disabled');
+         }*/
+        clearInterval(publicResolverInterval);
+        $('#saveDomainHash').removeClass('disabled');
     }, 1000);
 }
 
@@ -80,6 +97,9 @@ function saveDomainHash() {
         return;
     }
 
+    //var rootDomain = ensDomain.split('.');
+    //initRootDomain(rootDomain[rootDomain.length - 1]);
+
     getResolverContract(ensDomain, function (error, result) {
         if (error) {
             console.error('Empty resolver contract: ' + error);
@@ -91,7 +111,7 @@ function saveDomainHash() {
             alert('Resolver contract is empty. Try set up contract before changing content');
         } else {
             var domainNamehash = namehash(ensDomain);
-            result.setContent(domainNamehash, swarmHash, function (error, result) {
+            result.setContent(domainNamehash, '0x' + swarmHash, function (error, result) {
                 if (error) {
                     alert('Transaction rejected');
                     console.error(error);
@@ -100,7 +120,13 @@ function saveDomainHash() {
                 }
 
                 if (result) {
-                    alert('Transaction complete. View transaction on Etherscan: <a href="https://etherscan.io/tx/' + result + '" target="_blank">' + result + '</a>');
+                    var subdomain = '';
+                    if (currentNetworkTitle && currentNetworkTitle !== 'mainnet') {
+                        subdomain = currentNetworkTitle + '.';
+                    }
+
+                    var shortResult = result.substring(0, 50) + '...';
+                    alert('Transaction complete. View transaction on Etherscan: <a href="https://' + subdomain + 'etherscan.io/tx/' + result + '" target="_blank">' + shortResult + '</a>');
 
                     console.log(result);
                 }

@@ -1,6 +1,6 @@
 function namehash(name) {
     var node = '0x0000000000000000000000000000000000000000000000000000000000000000';
-    if (name != '') {
+    if (name !== '') {
         var labels = name.split(".");
         for (var i = labels.length - 1; i >= 0; i--) {
             node = web3.sha3(node + web3.sha3(labels[i]).slice(2), {encoding: 'hex'});
@@ -9,6 +9,129 @@ function namehash(name) {
     return node.toString();
 }
 
+function getContent(name, onResult) {
+    var node = namehash(name);
+    var resolverAddress = null;
+    ens.resolver(node, function (error, result) {
+        resolverAddress = result;
+        if (resolverAddress === '0x0000000000000000000000000000000000000000') {
+            if (onResult) {
+                onResult(null, "0x0000000000000000000000000000000000000000000000000000000000000000");
+            }
+        }
+
+        resolverContract.at(resolverAddress).content(node, function (error, result) {
+            if (onResult) {
+                onResult(error, result);
+            }
+        });
+    });
+}
+
+function getResolverContract(name, onResult) {
+    var node = namehash(name);
+    var resolverAddress = null;
+    ens.resolver(node, function (error, result) {
+        if (error) {
+            console.error('getResolverContract error: ' + error);
+            if (onResult) {
+                onResult(error, null);
+            }
+
+            return;
+        }
+
+        console.log('getResolverContract result: ' + result);
+        resolverAddress = result;
+        if (resolverAddress === '0x0000000000000000000000000000000000000000') {
+            if (onResult) {
+                onResult(true, resolverAddress);
+            }
+        } else {
+            var contract = resolverContract.at(resolverAddress);
+            if (onResult) {
+                onResult(error, contract);
+            }
+        }
+    });
+}
+
+function getAddr(name, onComplete) {
+    var node = namehash(name);
+    ens.resolver(node, function (error, result) {
+        if (error) {
+            console.error('getAddr resolver error: ' + error);
+        }
+
+        console.log('getAddr resolver result: ' + result);
+        if (result === '0x0000000000000000000000000000000000000000') {
+            if (onComplete) {
+                onComplete(null, result);
+            }
+        }
+
+        resolverContract.at(result).addr(node, function (error, result) {
+            if (error) {
+                console.error('getAddr resolverContract error: ' + error);
+            }
+
+            console.log('getAddr resolverContract result: ' + result);
+            if (onComplete) {
+                onComplete(error, result);
+            }
+        });
+    });
+}
+
+function initEns(registryAddress) {
+    // address from registryAddresses
+    ens = ensContract.at(registryAddress);
+
+    /*getAddr('resolver.eth', function (error, result) {
+     if (error) {
+     console.error('public resolver error: ' + error);
+     }
+
+     console.log('public resolver result: ' + result);
+     publicResolver = resolverContract.at(result);
+     });
+
+     ens.owner(namehash('addr.reverse'), function (error, result) {
+     reverseRegistrar = reverseRegistrarContract.at(result);
+     });*/
+}
+
+/*function initRootDomain(rootDomain) {
+ // test, eth
+ ens.owner(namehash(rootDomain), function (error, result) {
+ if (error) {
+ console.error('auctionRegistrarContract error: ' + error);
+ alert('Root domain "' + rootDomain + '" not found for current network. More information in logs.');
+
+ return;
+ }
+
+ console.log('".' + rootDomain + '" auctionRegistrarContract result: ' + result);
+ ethRegistrar = auctionRegistrarContract.at(result);
+ });
+ }*/
+
+var registryAddresses = {
+    // Mainnet
+    "1": "0x314159265dd8dbb310642f98f50c066173c1259b",
+    // Ropsten
+    "3": "0x112234455c3a32fd11230c42e7bccd4a84e02010",
+    // Rinkeby
+    "4": "0xe7410170f87102DF0055eB195163A03B7F2Bff4A"
+};
+
+var networkName = {
+    '1': 'mainnet',
+    '3': 'ropsten',
+    '4': 'rinkeby'
+};
+
+var ens = null;
 var ensContract = web3.eth.contract([
     {
         "constant": true,
@@ -210,7 +333,6 @@ var ensContract = web3.eth.contract([
         "type": "event"
     }
 ]);
-var ens = ensContract.at('0x314159265dd8dbb310642f98f50c066173c1259b');
 
 var auctionRegistrarContract = web3.eth.contract([
     {
@@ -762,15 +884,7 @@ var auctionRegistrarContract = web3.eth.contract([
         "type": "event"
     }
 ]);
-var ethRegistrar = null;
-ens.owner(namehash('eth'), function (error, result) {
-    if (error) {
-        console.error('auctionRegistrarContract error: ' + error);
-    }
-
-    console.log('auctionRegistrarContract result: ' + result);
-    ethRegistrar = auctionRegistrarContract.at(result);
-});
+//var ethRegistrar = null;
 
 var deedContract = web3.eth.contract([
     {
@@ -1293,210 +1407,154 @@ var resolverContract = web3.eth.contract([
     }
 ]);
 
-function getAddr(name, onComplete) {
-    var node = namehash(name);
-    ens.resolver(node, function (error, result) {
-        if (error) {
-            console.error('getAddr resolver error: ' + error);
-        }
+//var publicResolver = null;
+/*var reverseRegistrarContract = web3.eth.contract([
+ {
+ "constant": false,
+ "inputs": [
+ {
+ "name": "owner",
+ "type": "address"
+ },
+ {
+ "name": "resolver",
+ "type": "address"
+ }
+ ],
+ "name": "claimWithResolver",
+ "outputs": [
+ {
+ "name": "node",
+ "type": "bytes32"
+ }
+ ],
+ "payable": false,
+ "type": "function"
+ },
+ {
+ "constant": false,
+ "inputs": [
+ {
+ "name": "owner",
+ "type": "address"
+ }
+ ],
+ "name": "claim",
+ "outputs": [
+ {
+ "name": "node",
+ "type": "bytes32"
+ }
+ ],
+ "payable": false,
+ "type": "function"
+ },
+ {
+ "constant": true,
+ "inputs": [],
+ "name": "ens",
+ "outputs": [
+ {
+ "name": "",
+ "type": "address"
+ }
+ ],
+ "payable": false,
+ "type": "function"
+ },
+ {
+ "constant": true,
+ "inputs": [],
+ "name": "defaultResolver",
+ "outputs": [
+ {
+ "name": "",
+ "type": "address"
+ }
+ ],
+ "payable": false,
+ "type": "function"
+ },
+ {
+ "constant": true,
+ "inputs": [
+ {
+ "name": "addr",
+ "type": "address"
+ }
+ ],
+ "name": "node",
+ "outputs": [
+ {
+ "name": "ret",
+ "type": "bytes32"
+ }
+ ],
+ "payable": false,
+ "type": "function"
+ },
+ {
+ "constant": false,
+ "inputs": [
+ {
+ "name": "name",
+ "type": "string"
+ }
+ ],
+ "name": "setName",
+ "outputs": [
+ {
+ "name": "node",
+ "type": "bytes32"
+ }
+ ],
+ "payable": false,
+ "type": "function"
+ },
+ {
+ "inputs": [
+ {
+ "name": "ensAddr",
+ "type": "address"
+ },
+ {
+ "name": "resolverAddr",
+ "type": "address"
+ }
+ ],
+ "payable": false,
+ "type": "constructor"
+ }
+ ]);
+ var reverseRegistrar = null;*/
 
-        console.log('getAddr resolver result: ' + result);
-        if (result === '0x0000000000000000000000000000000000000000') {
-            if (onComplete) {
-                onComplete(null, result);
-            }
-        }
-
-        resolverContract.at(result).addr(node, function (error, result) {
-            if (error) {
-                console.error('getAddr resolverContract error: ' + error);
-            }
-
-            console.log('getAddr resolverContract result: ' + result);
-            if (onComplete) {
-                onComplete(error, result);
-            }
-        });
-    });
-
-}
-
-var publicResolver = null;
-getAddr('resolver.eth', function (error, result) {
-    if (error) {
-        console.error('public resolver error: ' + error);
+function regDomain(domain, rootDomain, resolverAddress) {
+// mainnet - getAddr('resolver.eth'), ropsten - 0x4c641fb9bad9b60ef180c31f56051ce826d21a9a, rinkeby - 0xb14fdee4391732ea9d2267054ead2084684c0ad8
+    var publicResolverAddress = '0xb14fdee4391732ea9d2267054ead2084684c0ad8';
+    if (resolverAddress) {
+        publicResolverAddress = resolverAddress;
     }
 
-    console.log('public resolver result: ' + result);
-    publicResolver = resolverContract.at(result);
-});
+    ens.owner(namehash(rootDomain), function (error, result) {
+        console.log('ens owner');
+        console.log(error);
+        console.log(result);
 
-var reverseRegistrarContract = web3.eth.contract([
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "name": "resolver",
-                "type": "address"
-            }
-        ],
-        "name": "claimWithResolver",
-        "outputs": [
-            {
-                "name": "node",
-                "type": "bytes32"
-            }
-        ],
-        "payable": false,
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "owner",
-                "type": "address"
-            }
-        ],
-        "name": "claim",
-        "outputs": [
-            {
-                "name": "node",
-                "type": "bytes32"
-            }
-        ],
-        "payable": false,
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "ens",
-        "outputs": [
-            {
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "payable": false,
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "defaultResolver",
-        "outputs": [
-            {
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "payable": false,
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "addr",
-                "type": "address"
-            }
-        ],
-        "name": "node",
-        "outputs": [
-            {
-                "name": "ret",
-                "type": "bytes32"
-            }
-        ],
-        "payable": false,
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "name",
-                "type": "string"
-            }
-        ],
-        "name": "setName",
-        "outputs": [
-            {
-                "name": "node",
-                "type": "bytes32"
-            }
-        ],
-        "payable": false,
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "name": "ensAddr",
-                "type": "address"
-            },
-            {
-                "name": "resolverAddr",
-                "type": "address"
-            }
-        ],
-        "payable": false,
-        "type": "constructor"
-    }
-]);
-var reverseRegistrar = null;
-ens.owner(namehash('addr.reverse'), function (error, result) {
-    reverseRegistrar = reverseRegistrarContract.at(result);
-});
+        if (result) {
+            var testRegistrar = fifsRegistrarContract.at(result);
+            testRegistrar.register(web3.sha3(domain), web3.eth.accounts[0], function (error, result) {
+                console.log('testRegistrar.register');
+                console.log(error);
+                console.log(result);
 
-function getContent(name, onResult) {
-    var node = namehash(name);
-    var resolverAddress = null;
-    ens.resolver(node, function (error, result) {
-        resolverAddress = result;
-        if (resolverAddress === '0x0000000000000000000000000000000000000000') {
-            if (onResult) {
-                onResult(null, "0x0000000000000000000000000000000000000000000000000000000000000000");
-            }
-        }
-
-        resolverContract.at(resolverAddress).content(node, function (error, result) {
-            if (onResult) {
-                onResult(error, result);
-            }
-        });
-    });
-}
-
-function getResolverContract(name, onResult) {
-    var node = namehash(name);
-    var resolverAddress = null;
-    ens.resolver(node, function (error, result) {
-        if (error) {
-            console.error('getResolverContract error: ' + error);
-            if (onResult) {
-                onResult(error, null);
-            }
-
-            return;
-        }
-
-        console.log('getResolverContract result: ' + result);
-        resolverAddress = result;
-        if (resolverAddress === '0x0000000000000000000000000000000000000000') {
-            if (onResult) {
-                onResult(true, resolverAddress);
-            }
-        } else {
-            var contract = resolverContract.at(resolverAddress);
-            if (onResult) {
-                onResult(error, contract);
-            }
+                if (result) {
+                    ens.setResolver(namehash(domain + '.' + rootDomain), publicResolverAddress, function (error, result) {
+                        console.log('ens.setResolver');
+                        console.log(error);
+                        console.log(result);
+                    });
+                }
+            });
         }
     });
 }
