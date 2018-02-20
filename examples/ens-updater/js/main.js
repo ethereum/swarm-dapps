@@ -26,7 +26,21 @@ function init() {
         var networkId = result;
         console.log('Network id: ' + networkId);
         currentNetworkTitle = networkName[networkId];
-        initEns(registryAddresses[networkId]);
+
+        web3.eth.getAccounts(function (error, result) {
+            if (error) {
+                console.error(error);
+            }
+
+            console.log(result);
+            if (result.length === 0) {
+                alert('Please, select main Ethereum account and reload this page');
+            } else {
+                web3.eth.defaultAccount = result[0];
+                initEns(registryAddresses[networkId]);
+            }
+        });
+
     });
 
 
