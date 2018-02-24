@@ -121,7 +121,7 @@ function saveDomainHash() {
             alert('Transaction rejected');
         });
     }).catch(function (e) {
-        alert(e);
+        alert('Name not found or resolver not set');
     });
 }
 
