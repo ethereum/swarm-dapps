@@ -1,5 +1,17 @@
-var publicResolverInterval = null;
+var EthereumENS = require('ethereum-ens');
+//var namehash = require('eth-ens-namehash');
+var Web3 = require('web3');
+var $ = require('jquery');
+window.$ = $;
+require('bootstrap');
+
+var networkName = {
+    '1': 'mainnet',
+    '3': 'ropsten',
+    '4': 'rinkeby'
+};
 var currentNetworkTitle = null;
+var ens = null;
 
 $(document).ready(function () {
     init();
@@ -15,7 +27,7 @@ function init() {
         window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
     }
 
-    console.log(web3);
+    ens = new EthereumENS(window.web3.currentProvider);
     web3.version.getNetwork(function (error, result) {
         if (error) {
             console.error(error);
@@ -34,28 +46,17 @@ function init() {
 
             console.log(result);
             if (result.length === 0) {
-                alert('Please, select main Ethereum account and reload this page');
+                alert('Please, select main Ethereum account, unlock MetaMask and reload this page.');
             } else {
                 web3.eth.defaultAccount = result[0];
-                initEns(registryAddresses[networkId]);
             }
         });
 
     });
 
-
     $('#saveDomainHash').on('click', function () {
         saveDomainHash();
     });
-
-    publicResolverInterval = setInterval(function () {
-        /*if (publicResolver && publicResolver.address) {
-         clearInterval(publicResolverInterval);
-         $('#saveDomainHash').removeClass('disabled');
-         }*/
-        clearInterval(publicResolverInterval);
-        $('#saveDomainHash').removeClass('disabled');
-    }, 1000);
 }
 
 function receiveInputData() {
@@ -93,15 +94,6 @@ function isCorrectSwarmHash(hash) {
 }
 
 function saveDomainHash() {
-    // theswarm.eth (namehash: 0x1f680e87e69e17c46be80a707cce1b86d726a716a671b540cb13eb57562c17c2) => resolver: 0x1da022710df5002339274aadee8d58218e9d6ab5 => content: 0x2c2d2adb8fd0cba399282fb59f8219e5fbbd67ba06fcf5c8d343f5eb1c8be022
-    /*getContent('theswarm.eth', function (error, result) {
-     if (error) {
-     console.error('public resolver error: ' + error);
-     }
-
-     console.log('public resolver result: ' + result);
-     });*/
-
     var ensDomain = $('#ensDomain').val();
     var swarmHash = $('#swarmHash').val();
 
@@ -111,41 +103,24 @@ function saveDomainHash() {
         return;
     }
 
-    //var rootDomain = ensDomain.split('.');
-    //initRootDomain(rootDomain[rootDomain.length - 1]);
+    var resultSwarmHash = '0x' + swarmHash;
 
-    getResolverContract(ensDomain, function (error, result) {
-        if (error) {
-            console.error('Empty resolver contract: ' + error);
-        }
+    var resolver = ens.resolver(ensDomain);
+    resolver.instancePromise.then(function () {
+        return resolver.setContent(resultSwarmHash, {from: web3.eth.defaultAccount}).then(function (result) {
+            // user complete transaction
+            var subdomain = '';
+            if (currentNetworkTitle && currentNetworkTitle !== 'mainnet') {
+                subdomain = currentNetworkTitle + '.';
+            }
 
-        console.log(result);
-        if (error || !result) {
-
-            alert('Resolver contract is empty. Try set up contract before changing content');
-        } else {
-            var domainNamehash = namehash(ensDomain);
-            result.setContent(domainNamehash, '0x' + swarmHash, function (error, result) {
-                if (error) {
-                    alert('Transaction rejected');
-                    console.error(error);
-
-                    return;
-                }
-
-                if (result) {
-                    var subdomain = '';
-                    if (currentNetworkTitle && currentNetworkTitle !== 'mainnet') {
-                        subdomain = currentNetworkTitle + '.';
-                    }
-
-                    var shortResult = result.substring(0, 50) + '...';
-                    alert('Transaction complete. View transaction on Etherscan: <a href="https://' + subdomain + 'etherscan.io/tx/' + result + '" target="_blank">' + shortResult + '</a>');
-
-                    console.log(result);
-                }
-            });
-        }
+            var shortResult = result.substring(0, 50) + '...';
+            alert('Transaction complete. View transaction on Etherscan: <a href="https://' + subdomain + 'etherscan.io/tx/' + result + '" target="_blank">' + shortResult + '</a>');
+        }).catch(function (r) {
+            alert('Transaction rejected');
+        });
+    }).catch(function (e) {
+        alert(e);
     });
 }
 

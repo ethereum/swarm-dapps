@@ -11,6 +11,9 @@
   "dependencies": {
     "bootstrap": "^4.0.0",
     "bootswatch": "^4.0.0",
+    "browserify": "^16.1.0",
+    "ethereum-ens": "^0.7.3",
     "jquery": "^3.3.1"
-  }
+  },
+  "devDependencies": {}
 }
