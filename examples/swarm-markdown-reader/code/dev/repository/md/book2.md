@@ -2,15 +2,15 @@
 
 ## Introduction
 
-With the public alpha release of Swarm, the content-addressed 
-distributed storage subsystem of Ethereum, the public is encouraged to 
-test it, play with it, develop applications for it and provide 
-developers with feedback, thus helping further development. As a first 
-approximation, one can think about Swarm as a giant distributed web 
-server and content distribution network for static content. In this 
-step-by-step tutorial, we are going to set up a Swarm node on the test 
-network, upload and modify content. For more detailed information, 
-please refer to the [official Swarm 
+With the public alpha release of Swarm, the content-addressed
+distributed storage subsystem of Ethereum, the public is encouraged to
+test it, play with it, develop applications for it and provide
+developers with feedback, thus helping further development. As a first
+approximation, one can think about Swarm as a giant distributed web
+server and content distribution network for static content. In this
+step-by-step tutorial, we are going to set up a Swarm node on the test
+network, upload and modify content. For more detailed information,
+please refer to the [official Swarm
 documentation](https://swarm-guide.readthedocs.io/).
 
 This tutorial assumes a Unix-like system setup on the commandline.
@@ -19,9 +19,9 @@ change on any other Linux-based system and with only minor changes elsewhere.
 
 ## Starting up your Ethereum node.
 
-The public alpha test of Swarm is conducted with the Ropsten test block 
-chain. Thus, you should first join the Ropsten test network with your 
-```geth``` client. Please see [the appropriate installation instructions 
+The public alpha test of Swarm is conducted with the Ropsten test block
+chain. Thus, you should first join the Ropsten test network with your
+```geth``` client. Please see [the appropriate installation instructions
 for your system](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum).
 
 Start your ```geth``` client in light mode on the Ropsten network:
@@ -29,7 +29,7 @@ Start your ```geth``` client in light mode on the Ropsten network:
 $ geth --light --testnet
 ```
 
-After about 30 seconds, your node will be syncrhonized with the rest of 
+After about 30 seconds, your node will be syncrhonized with the rest of
 the network. Next, you should open a javascript console from a different
 terminal window:
 ```
@@ -51,10 +51,10 @@ Please save tha account address that you get as an output from this command.
 
 ## Starting up your Swarm node
 
-With your Ethereum node up and running, you are ready to install and 
-launch ```swarm```, the Swarm binary. Installation is system dependent 
-and is more or less identical to the way you installed ```geth``` above. 
-In the particular case of Ubuntu, you can do this, if you installed 
+With your Ethereum node up and running, you are ready to install and
+launch ```swarm```, the Swarm binary. Installation is system dependent
+and is more or less identical to the way you installed ```geth``` above.
+In the particular case of Ubuntu, you can do this, if you installed
 ```geth``` from the PPA repository:
 ```
 $ sudo apt-get install swarm
@@ -87,7 +87,7 @@ the hash code corresponsing to your file):
 In the absence of a ```--manifest=false``` argument in addition to the filename and sub-command ```up```
 a manifest file including the metadata has also been uploaded in addition to the binary content of our file.
 You can see the manifest file's content by accessing it though the raw http API:
-[http://localhost:8500/bzzr:/b18eb0a930ec5ff852879935153a6d5799ae47df2f5572c8b27d0625d5a33010/](http://localhost:8500/bzzr:/b18eb0a930ec5ff852879935153a6d5799ae47df2f5572c8b27d0625d5a33010/)
+[http://localhost:8500/bzz-raw:/b18eb0a930ec5ff852879935153a6d5799ae47df2f5572c8b27d0625d5a33010/](http://localhost:8500/bzz-raw:/b18eb0a930ec5ff852879935153a6d5799ae47df2f5572c8b27d0625d5a33010/)
 
 ```
 {"entries":[{"hash":"97e3fdaa0ba1dc2ece04848c5e524e7da88f736d258046da55ddeed0cda03ef9","contentType":"image/svg+xml"}]}
@@ -135,11 +135,11 @@ content integrity guarantees.*
 
 This is why Swarm is called *content addressed storage*.
 
-The photo album example above is actually a distributed swarm 
-application itself. You can add and remove photos and you can also 
-rearrange their ordering by clicking on icons in the top left corner. 
-You can create entire photo albums consisting exclusively of your 
-photos. Please note that with each change, the hash code of your photo 
+The photo album example above is actually a distributed swarm
+application itself. You can add and remove photos and you can also
+rearrange their ordering by clicking on icons in the top left corner.
+You can create entire photo albums consisting exclusively of your
+photos. Please note that with each change, the hash code of your photo
 album changes.
 
 ## Naming Swarm Sites
