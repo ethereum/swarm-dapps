@@ -1,0 +1,4 @@
+/*******************************
+ * [documentreader.txt]
+ * This folder holds the built files for the document reader.
+ ******************************/

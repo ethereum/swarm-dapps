@@ -1,0 +1,6 @@
+{
+	"configuration": {
+		"postURL": "http://swarm-gateways.net/bzzr:/",
+		"readURL": "./markdowntests/"
+	}
+}

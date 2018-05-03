@@ -1,0 +1,6 @@
+{
+	"configuration": {
+		"postURL": "/bzz-raw:/",
+		"readURL": "./repository/md/"
+	}
+}

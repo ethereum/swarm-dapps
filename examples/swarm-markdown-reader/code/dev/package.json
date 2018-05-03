@@ -1,0 +1,67 @@
+{
+  "name": "ethereum-markdown-reader",
+  "version": "0.1.2",
+  "description": "Development environment for ethereum-markdown-reader",
+  "keywords": [],
+  "author": "Dean Vaessen <hello@deanvaessen.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:username"
+  },
+  "config": {
+    "port": 3000
+  },
+  "scripts": {
+    "start": "webpack-dev-server --config webpack/development.js --colors --history-api-fallback --inline --progress",
+    "build": "npm run build-dev && npm run prepare-build && npm run build-build && npm run post-build",
+    "build-dev": "webpack --config webpack/production.js -p --progress",
+    "prepare-build": "node prebuildglue.js --exec babel-node --presets es2015,stage-2",
+    "post-build": "node postbuildglue.js --exec babel-node --presets es2015,stage-2",
+    "build-build": "cd ./../build && npm run build",
+    "lint:js": "./node_modules/.bin/eslint src; exit 0;"
+  },
+  "dependencies": {
+    "bootstrap": "4.0.0-alpha.6",
+    "font-awesome": "^4.7.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.7",
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.10.4",
+    "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-runtime": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-2": "^6.11.0",
+    "browser-sync": "^2.13.0",
+    "browser-sync-webpack-plugin": "^1.1.0",
+    "css-loader": "^0.23.1",
+    "eslint": "^3.0.1",
+    "eslint-friendly-formatter": "^2.0.5",
+    "eslint-loader": "^1.4.1",
+    "eslint-plugin-html": "^1.5.1",
+    "eslint-plugin-import": "^1.10.2",
+    "exports-loader": "^0.6.3",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
+    "fs": "0.0.1-security",
+    "html-loader": "^0.4.4",
+    "html-webpack-plugin": "^2.22.0",
+    "imports-loader": "^0.6.5",
+    "ncp": "^2.0.0",
+    "node-sass": "^3.8.0",
+    "postcss-loader": "^0.9.1",
+    "prerender-spa-plugin": "^1.1.0",
+    "require-dir": "^0.3.0",
+    "sass-loader": "^4.1.1",
+    "source-map-loader": "^0.1.5",
+    "style-loader": "^0.13.1",
+    "unminified-webpack-plugin": "^1.2.0",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.1",
+    "webpack-cleanup-plugin": "^0.2.0",
+    "webpack-dev-server": "^1.14.1",
+    "webpack-merge": "^0.14.0"
+  }
+}

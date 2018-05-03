@@ -20,9 +20,9 @@ var params = {
     wait: 1000, // Waits for all changes, before reloading. Defaults to 0 sec.
     logLevel: 2, // 0 = errors only, 1 = some, 2 = lots
     proxy: [
-        [ '/bzz:', 'http://localhost:32200/bzz:' ],
-        [ '/bzzr:', 'http://localhost:32200/bzzr:' ],
-        [ '/bzzi:', 'http://localhost:32200/bzzi:' ],
+        [ '/bzz:', 'http://localhost:8500/bzz:' ],
+        [ '/bzz-raw:', 'http://localhost:8500/bzz-raw:' ],
+        [ '/bzz-immutable:', 'http://localhost:8500/bzz-immutable:' ],
     ],
     middleware: [function(req, res, next) { next(); }] // Takes an array of Connect-compatible middleware that are injected into the server middleware stack
 };
