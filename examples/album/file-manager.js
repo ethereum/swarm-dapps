@@ -32,7 +32,7 @@ function uploadFile(files, nr, uri) {
             });
         }
     };
-    xhr.open("PUT", uri + "imgs/" + currentFile.name, true);
+    xhr.open("POST", uri + "imgs/" + currentFile.name, true);
     xhr.setRequestHeader('Content-Type', currentFile.type);
 
     readFile(currentFile, function (result) {
@@ -135,7 +135,7 @@ function handleFiles(files) {
 
 function sendImages(xhr, uri) {
     // set up request
-    xhr.open("PUT", uri + "data.json", true);
+    xhr.open("POST", uri + "data.json", true);
     xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
     // send the collected data as JSON
     xhr.send(JSON.stringify(imgs));
