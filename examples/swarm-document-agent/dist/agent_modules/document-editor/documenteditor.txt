@@ -1,0 +1,4 @@
+/*******************************
+ * [documenteditor.txt]
+ * This folder holds the built files for the document editor.
+ ******************************/

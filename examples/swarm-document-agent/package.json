@@ -1,0 +1,27 @@
+{
+	"name": "swarm-document-agent",
+	"version": "1.3.0",
+	"description": "Development environment for swarm-markdown-agent",
+	"keywords": [],
+	"author": "Dean Vaessen <hello@deanvaessen.com>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:username"
+	},
+	"config": {
+		"port": 3000
+	},
+	"scripts": {
+		"build": "npm run build-reader && npm run build-editor",
+		"build-reader": "cd ./src/agent_modules/document-reader/ && npm run build",
+		"build-editor": "cd ./src/agent_modules/document-editor/ && npm run build",
+		"install-all": "npm run install-reader && npm run install-editor",
+		"install-reader": "cd ./src/agent_modules/document-reader/ && npm install",
+		"install-editor": "cd ./src/agent_modules/document-editor/ && npm install"
+	},
+	"dependencies": {
+	},
+	"devDependencies": {
+	}
+}
