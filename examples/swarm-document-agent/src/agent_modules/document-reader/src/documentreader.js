@@ -36,7 +36,7 @@ const index = (function() {
 
 				// If no readURL was given, look in a fallback directory
 				if (!requestedreadURL && readerConfigurationObject.readURL === 'unknown'){
-					readURL = '/bzzr:/';
+					readURL = '/bzz-raw:/';
 				} else if (requestedreadURL) {
 					readURL = requestedreadURL;
 				} else if (readerConfigurationObject.readURL !== 'unknown') {

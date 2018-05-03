@@ -1,6 +1,6 @@
 {
 	"configuration": {
-		"postURL": "http://swarm-gateways.net/bzzr:/",
+		"postURL": "/bzz-raw:/",
 		"readURL": "./repository/md/"
 	}
 }

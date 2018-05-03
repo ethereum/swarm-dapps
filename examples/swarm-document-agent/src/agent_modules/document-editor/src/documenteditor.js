@@ -76,7 +76,7 @@ const index = (function() {
 
 			// If no base readURL was given, look in a fallback directory
 			if (!requestedReadURL && editorConfigurationObject.readURL === 'unknown'){
-				readURL = '/bzzr:/';
+				readURL = '/bzz-raw:/';
 			} else if (requestedReadURL) {
 				readURL = requestedReadURL;
 			} else if (editorConfigurationObject.readURL !== 'unknown') {
@@ -85,7 +85,7 @@ const index = (function() {
 
 			// If no base postURL was given, look in a fallback directory
 			if (!requestedPostURL && editorConfigurationObject.postURL === 'unknown'){
-				postURL = '/bzzr:/';
+				postURL = '/bzz-raw:/';
 			} else if (requestedPostURL) {
 				postURL = requestedPostURL;
 			} else if (editorConfigurationObject.postURL !== 'unknown') {
