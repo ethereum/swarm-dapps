@@ -36,7 +36,7 @@ const index = (function() {
 
 				// If no baseURL was given, look in a fallback directory
 				if (!requestedBaseURL && readerConfigurationObject.baseURL === 'unknown'){
-					baseURL = '/bzzr:/';
+					baseURL = '/bzz-raw:/';
 				} else if (requestedBaseURL) {
 					baseURL = requestedBaseURL;
 				} else if (readerConfigurationObject.baseURL !== 'unknown') {

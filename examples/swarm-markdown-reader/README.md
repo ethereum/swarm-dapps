@@ -4,8 +4,8 @@
 
 ### Outline ###
 
-Đapp expects swarm hash of the raw markdown file in the fragment part of 
-the URL (after #). Linking to other documents can be done with 
+Đapp expects swarm hash of the raw markdown file in the fragment part of
+the URL (after #). Linking to other documents can be done with
 fragment-only links.
 
 
@@ -35,7 +35,7 @@ Get the Javascript, HMTL, JSON configuration, and CSS file from ``/code/build/di
 
 **Notes**:
 <br />
-1. If you want to change the baseURL, you can do so through ``readerConfiguration.json`` in ``/code/build/dist``. This JSON file can also be easily extended in the future if more variables are to be introduced. If the configuration file is not present, the app has a built in fallback to ``/bzzr:/``
+1. If you want to change the baseURL, you can do so through ``readerConfiguration.json`` in ``/code/build/dist``. This JSON file can also be easily extended in the future if more variables are to be introduced. If the configuration file is not present, the app has a built in fallback to ``/bzz-raw:/``
 2. The index.html file also includes an extra error condition (users browsing to the app location and not a fragment).
 3. In case you want to extend this app further in the future as a module of a larger framework, you can use the development set-up to import/require the markdownreader.js file in source and initiate the app as follows:
 <br />
