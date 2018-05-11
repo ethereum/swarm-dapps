@@ -41,7 +41,7 @@ function uploadFile(files, nr, uri) {
 }
 
 function isCorrectSwarmHash(hash) {
-    return hash && hash.length === 64;
+    return hash && (hash.length === 64 || hash.length === 128);
 }
 
 function checkSwarmHash(hash) {
