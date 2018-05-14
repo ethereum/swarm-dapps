@@ -213,7 +213,7 @@ const index = (function() {
 				const shouldEncrypt = window.swarmagent.editor.store.encrypted;
 				let postTo = postURL;
 
-				if ( shouldEncrypt ) postTo = postURL + 'encrypted';
+				if ( shouldEncrypt ) postTo = postURL + 'encrypt';
 
 				// Post to a URL & navigate
 				support.communicate.post(convertedPost, postTo, (responseText, responseStatus) => {
