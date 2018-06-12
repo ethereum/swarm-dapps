@@ -12,7 +12,7 @@
 
 	// The app
 	/*eslint-disable */
-	import documentEditor from './documentEditor';
+	import documentEditor from './documenteditor';
 	/*eslint-enable */
 
 	// Import base package for CKEDITOR
