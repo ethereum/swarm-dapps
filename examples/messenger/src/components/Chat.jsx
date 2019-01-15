@@ -4,6 +4,7 @@ import {
   Container, Row, Input, Button, InputGroup, InputGroupAddon
 } from 'reactstrap';
 
+import PubKey from './PubKey';
 import ChatsIcon from './ChatsIcon';
 
 class Chat extends Component {
@@ -59,7 +60,9 @@ class Chat extends Component {
               Object.values(data.messages)
                 .map((c, i) => {
                   return (
-                    <div key={i}>{c.sender.substr(0, 8)}: {c.text}</div>
+                    <div key={i}>
+                      <PubKey publicKey={c.sender} />: {c.text}
+                    </div>
                   )
                 })
             }

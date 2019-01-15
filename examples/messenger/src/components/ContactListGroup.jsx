@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 
+import PubKey from './PubKey';
+
 class ContactListGroup extends Component {
   static propTypes = {
     renderItem: PropTypes.func.isRequired,
@@ -25,7 +27,11 @@ class ContactListGroup extends Component {
 }
 
 ContactListGroup.defaultProps = {
-  renderItem: (c, i) => <div key={i} className='text-truncate'>{c.key}</div>
+  renderItem: (c, i) => (
+    <div key={i} className='text-truncate'>
+      <PubKey publicKey={c.key} />
+    </div>
+  )
 };
 
 export default ContactListGroup;

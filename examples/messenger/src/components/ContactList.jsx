@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import ContactInvite from './ContactInvite';
 import ContactListGroup from './ContactListGroup';
 import ContactRequest from './ContactRequest';
+import PubKey from './PubKey';
 import { groupBy } from '../base/fn';
 
 class ContactList extends Component {
@@ -48,7 +49,7 @@ class ContactList extends Component {
               key={i}
               className='text-truncate'
               onClick={() => { onStartChat(c); }}>
-              {c.key}
+              <PubKey publicKey={c.key} />
             </div>}>
         </ContactListGroup>
       </div>

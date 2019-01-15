@@ -5,6 +5,8 @@ import {
   Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 
+import PubKey from './PubKey';
+
 class ContactRequest extends Component {
   static propTypes = {
     value: PropTypes.string.isRequired,
@@ -32,7 +34,7 @@ class ContactRequest extends Component {
 
     return (
       <div className='text-truncate' onClick={this.toggle}>
-        {value}
+        <PubKey publicKey={value} />
         <Modal isOpen={this.state.modal} centered>
           <Form className='pt-3'>
             <ModalHeader>Received contact</ModalHeader>
