@@ -38,7 +38,7 @@ class ContactInvite extends Component {
 
   async onRequest() {
     try {
-      const { publicKey, address } = this.stateж
+      const { publicKey, address } = this.state;
       await this.props.onRequest(publicKey, address);
     } catch (error) {
       if (error) {
@@ -69,7 +69,7 @@ class ContactInvite extends Component {
               />
             </FormGroup>
             <FormGroup>
-              <Label for='contactPublicKey'>Contact address</Label>
+              <Label for='contactAddress'>Contact address</Label>
               <Input
                 type='text'
                 id='contactAddress'
