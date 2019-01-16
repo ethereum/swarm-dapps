@@ -68,7 +68,7 @@ export default class Messanger {
       this.client.pss.stringToTopic(createRandomString()),
     ]);
 
-    await this.client.pss.setPeerPublicKey(key, contactTopic);
+    await this.client.pss.setPeerPublicKey(key, contactTopic, this.account.overlayAddress);
     const message = {
       type: 'contact_request',
       payload: {
@@ -97,7 +97,7 @@ export default class Messanger {
     }
 
     const topic = await this.client.pss.stringToTopic(key);
-    await this.client.pss.setPeerPublicKey(key, topic);
+    await this.client.pss.setPeerPublicKey(key, topic, this.account.overlayAddress);
     const message = {
       type: 'contact_response',
       payload,
@@ -132,7 +132,7 @@ export default class Messanger {
   async createChatSubscription(contactKey, topic) {
     const [sub] = await Promise.all([
       this.client.pss.createTopicSubscription(topic),
-      this.client.pss.setPeerPublicKey(contactKey, topic),
+      this.client.pss.setPeerPublicKey(contactKey, topic, this.account.overlayAddress),
     ])
     return sub.pipe(
       map(decodePssEvent),
