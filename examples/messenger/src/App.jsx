@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { hexValueType } from '@erebos/swarm-browser';
 import {
-  Container, Row, Col, Navbar, NavbarBrand, Nav, NavItem
+  Container, Row, Col, Navbar, NavbarBrand,
+  Nav, NavItem, Form, FormGroup, Input, Button,
+  Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import sum from 'hash-sum';
 
@@ -29,7 +31,9 @@ class App extends Component {
       contacts: [],
       chats: [],
       selectedChatId: {},
-      selectedChat: false
+      selectedChat: false,
+      starting: true,
+      ws: 'ws://127.0.0.1:8546'
     };
 
     this.onReceiveContactEvent = this.onReceiveContactEvent.bind(this);
@@ -42,7 +46,7 @@ class App extends Component {
   }
 
   async init() {
-    this.messenger = await new Messenger({ ws: 'ws://127.0.0.1:8546' });
+    this.messenger = await new Messenger({ ws: this.state.ws });
     const { account } = this.messenger;
     const state = storage.get() || {};
 
@@ -56,10 +60,6 @@ class App extends Component {
         chats: this.state.chats
       });
     });
-  }
-
-  componentDidMount() {
-    this.init();
   }
 
   componentWillUnmount() {
@@ -255,10 +255,45 @@ class App extends Component {
   }
 
   render() {
-    const { account, chats, selectedChat, selectedChatId } = this.state;
+    if (this.state.starting) {
+      return (
+        <Modal isOpen={true} centered>
+          <Form className='pt-3'>
+            <ModalHeader>WebSocket connection</ModalHeader>
+            <ModalBody style={{ wordWrap: 'break-word' }}>
+              <FormGroup>
+                <Input
+                  type='text'
+                  id='ws'
+                  onChange={(e) => { this.setState({ ws: e.target.value }) }}
+                  onKeyPress={(e) => { if (e.key === 'Enter') { this.onRequest(); } }}
+                  autoFocus
+                  defaultValue={this.state.ws}
+                />
+              </FormGroup>
+            </ModalBody>
+            <ModalFooter>
+              <Button color='primary' onClick={() => {
+                this.setState({ starting: false })
+              }}>Connect</Button>
+            </ModalFooter>
+          </Form>
+        </Modal>
+      );
+    }
+
+    this.init();
+
+    const { account } = this.state;
+    if (!account || !account.publicKey) {
+      return <div className='text-center'>No connection</div>
+    }
+
+    const { chats, selectedChat, selectedChatId } = this.state;
     const chat = chats.find(c => c.key === selectedChatId);
     const activeContactsStyle = !selectedChat ? { background: '#282c34' } : null;
     const activeChatsStyle = selectedChat ? { background: '#282c34' } : null;
+
 
     return (
       <Container fluid className='h-100 d-flex flex-column'>
