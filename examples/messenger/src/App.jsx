@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { hexValueType } from '@erebos/swarm-browser';
 import {
-  Container, Row, Col, Navbar, NavbarBrand,
-  Nav, NavItem, Form, FormGroup, Input, Button,
-  Modal, ModalHeader, ModalBody, ModalFooter
+  Container, Row, Col, Navbar, NavbarBrand, Nav, NavItem
 } from 'reactstrap';
 import sum from 'hash-sum';
 
@@ -31,9 +29,7 @@ class App extends Component {
       contacts: [],
       chats: [],
       selectedChatId: {},
-      selectedChat: false,
-      starting: true,
-      ws: 'ws://127.0.0.1:8546'
+      selectedChat: false
     };
 
     this.onReceiveContactEvent = this.onReceiveContactEvent.bind(this);
@@ -46,7 +42,7 @@ class App extends Component {
   }
 
   async init() {
-    this.messenger = await new Messenger({ ws: this.state.ws });
+    this.messenger = await new Messenger({ ws: this.props.ws });
     const { account } = this.messenger;
     const state = storage.get() || {};
 
@@ -62,16 +58,20 @@ class App extends Component {
     });
   }
 
+  componentDidMount() {
+    this.init()
+  }
+
   componentWillUnmount() {
     this.messenger.unsubscribe();
   }
 
-  async onContactRequest(value) {
+  async onContactRequest(publicKey, address) {
     const { account, contacts } = this.state;
-    keyUtils.isValidPubKey(value, account.publicKey, contacts);
+    keyUtils.isValidPubKey(publicKey, account.publicKey, contacts);
 
-    const key = hexValueType(value);
-    const { sharedTopic } = await this.messenger.sendContactRequest(key);
+    const key = hexValueType(publicKey);
+    const { sharedTopic } = await this.messenger.sendContactRequest(key, address);
 
     const list = [
       ...contacts,
@@ -87,10 +87,10 @@ class App extends Component {
   }
 
   async sendContactResponse(key, accepted) {
-    await this.messenger.sendContactResponse(key, accepted);
-
     const { contacts, chats } = this.state;
     const existing = contacts.find(c => c.key === key);
+
+    await this.messenger.sendContactResponse(key, accepted, (existing || {}).address);
 
     const contact = {
       ...existing,
@@ -106,6 +106,7 @@ class App extends Component {
         contacts: [...contacts.filter(c => c.key !== key), contact],
         chats: accepted ? [...chats, {
           key: contact.key,
+          address: contact.address,
           topic: contact.topic,
           messages: {}
         }] : chats,
@@ -164,6 +165,7 @@ class App extends Component {
         contacts: [...contacts.filter(c => c.key !== e.key), contact],
         chats: e.payload.contact ? [...chats, {
           key: contact.key,
+          address: contact.address,
           topic: contact.topic,
           messages: {}
         }] : chats,
@@ -255,35 +257,6 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.starting) {
-      return (
-        <Modal isOpen={true} centered>
-          <Form className='pt-3'>
-            <ModalHeader>WebSocket connection</ModalHeader>
-            <ModalBody style={{ wordWrap: 'break-word' }}>
-              <FormGroup>
-                <Input
-                  type='text'
-                  id='ws'
-                  onChange={(e) => { this.setState({ ws: e.target.value }) }}
-                  onKeyPress={(e) => { if (e.key === 'Enter') { this.onRequest(); } }}
-                  autoFocus
-                  defaultValue={this.state.ws}
-                />
-              </FormGroup>
-            </ModalBody>
-            <ModalFooter>
-              <Button color='primary' onClick={() => {
-                this.setState({ starting: false })
-              }}>Connect</Button>
-            </ModalFooter>
-          </Form>
-        </Modal>
-      );
-    }
-
-    this.init();
-
     const { account } = this.state;
     if (!account || !account.publicKey) {
       return <div className='text-center'>No connection</div>

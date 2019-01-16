@@ -53,7 +53,7 @@ export default class Messanger {
   }
 
   async subscribeChat(chat, onReceiveChatEvent) {
-    const subscription = await this.createChatSubscription(chat.key, chat.topic);
+    const subscription = await this.createChatSubscription(chat.key, chat.topic, chat.address);
     const chatSub = subscription.subscribe(onReceiveChatEvent);
     this._subscriptions.push(chatSub);
   }
@@ -62,13 +62,13 @@ export default class Messanger {
     this._subscriptions.map(s => s.unsubscribe());
   }
 
-  async sendContactRequest(key) {
+  async sendContactRequest(key, address) {
     const [contactTopic, sharedTopic] = await Promise.all([
       this.client.pss.stringToTopic(key),
       this.client.pss.stringToTopic(createRandomString()),
     ]);
 
-    await this.client.pss.setPeerPublicKey(key, contactTopic, this.account.overlayAddress);
+    await this.client.pss.setPeerPublicKey(key, contactTopic, address);
     const message = {
       type: 'contact_request',
       payload: {
@@ -84,7 +84,7 @@ export default class Messanger {
     return { contactTopic, sharedTopic };
   }
 
-  async sendContactResponse(key, accept, data = {}) {
+  async sendContactResponse(key, accept, address, data = {}) {
     let payload
     if (accept) {
       payload = {
@@ -97,7 +97,7 @@ export default class Messanger {
     }
 
     const topic = await this.client.pss.stringToTopic(key);
-    await this.client.pss.setPeerPublicKey(key, topic, this.account.overlayAddress);
+    await this.client.pss.setPeerPublicKey(key, topic, address);
     const message = {
       type: 'contact_response',
       payload,
@@ -129,10 +129,10 @@ export default class Messanger {
     )
   }
 
-  async createChatSubscription(contactKey, topic) {
+  async createChatSubscription(contactKey, topic, address) {
     const [sub] = await Promise.all([
       this.client.pss.createTopicSubscription(topic),
-      this.client.pss.setPeerPublicKey(contactKey, topic, this.account.overlayAddress),
+      this.client.pss.setPeerPublicKey(contactKey, topic, address),
     ])
     return sub.pipe(
       map(decodePssEvent),

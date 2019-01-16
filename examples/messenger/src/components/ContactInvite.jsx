@@ -15,11 +15,11 @@ class ContactInvite extends Component {
     this.state = {
       modal: false,
       publicKey: '',
+      address: '',
       error: ''
     };
 
     this.toggle = this.toggle.bind(this);
-    this.onChange = this.onChange.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
     this.onRequest = this.onRequest.bind(this);
   }
@@ -27,12 +27,6 @@ class ContactInvite extends Component {
   toggle() {
     this.setState({
       modal: !this.state.modal
-    });
-  }
-
-  onChange(e) {
-    this.setState({
-      publicKey: e.target.value
     });
   }
 
@@ -44,7 +38,8 @@ class ContactInvite extends Component {
 
   async onRequest() {
     try {
-      await this.props.onRequest(this.state.publicKey);
+      const { publicKey, address } = this.stateж
+      await this.props.onRequest(publicKey, address);
     } catch (error) {
       if (error) {
         this.setState({ error: error.message });
@@ -68,7 +63,18 @@ class ContactInvite extends Component {
                 type='text'
                 id='contactPublicKey'
                 placeholder='Public key'
-                onChange={this.onChange}
+                onChange={(e) => { this.setState({ publicKey: e.target.value }); }}
+                onKeyPress={this.onKeyPress}
+                autoFocus
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for='contactPublicKey'>Contact address</Label>
+              <Input
+                type='text'
+                id='contactAddress'
+                placeholder='Address'
+                onChange={(e) => { this.setState({ address: e.target.value }); }}
                 onKeyPress={this.onKeyPress}
                 autoFocus
               />
