@@ -19,7 +19,7 @@ class Starter extends Component {
   render() {
     if (this.state.starting) {
       return (
-        <Modal isOpen={true} centered>
+        <Modal isOpen={true} centered autoFocus={false}>
           <Form className='pt-3'>
             <ModalHeader>WebSocket connection</ModalHeader>
             <ModalBody style={{ wordWrap: 'break-word' }}>
@@ -28,7 +28,11 @@ class Starter extends Component {
                   type='text'
                   id='ws'
                   onChange={(e) => { this.setState({ ws: e.target.value }) }}
-                  onKeyPress={(e) => { if (e.key === 'Enter') { this.onRequest(); } }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      this.setState({ starting: false })
+                    }
+                  }}
                   autoFocus
                   defaultValue={this.state.ws}
                 />

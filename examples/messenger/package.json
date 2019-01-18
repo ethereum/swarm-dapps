@@ -2,6 +2,7 @@
   "name": "messenger",
   "version": "0.0.1",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@erebos/api-pss": "^0.5.3",
     "@erebos/swarm-browser": "^0.5.3",
