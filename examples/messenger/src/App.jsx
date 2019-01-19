@@ -39,6 +39,7 @@ class App extends Component {
     this.onDeclineContact = this.onDeclineContact.bind(this);
     this.onStartChat = this.onStartChat.bind(this);
     this.onMessageSend = this.onMessageSend.bind(this);
+    this.destruct = this.destruct.bind(this);
   }
 
   async init() {
@@ -60,12 +61,17 @@ class App extends Component {
     });
   }
 
+  destruct() {
+    this.messenger.unsubscribe();
+  }
+
   componentDidMount() {
-    this.init()
+    this.init();
+    window.addEventListener("beforeunload", this.destruct);
   }
 
   componentWillUnmount() {
-    this.messenger.unsubscribe();
+    window.removeEventListener("beforeunload", this.destruct);
   }
 
   async onContactRequest(publicKey, address) {
