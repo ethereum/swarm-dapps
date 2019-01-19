@@ -14,7 +14,7 @@ function decodePssEvent(data) {
   }
 }
 
-export default class Messanger {
+export default class Messenger {
   _subscriptions = [];
 
   client = undefined;
@@ -22,11 +22,10 @@ export default class Messanger {
 
   constructor(config) {
     this.client = new SwarmClient({ ws: config.ws });
+  }
 
-    return (async () => {
-      this.account = await this.getAccount();
-      return this;
-    })();
+  async init() {
+    this.account = await this.getAccount();
   }
 
   async getAccount() {

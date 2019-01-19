@@ -6,6 +6,12 @@ The project works with local instanse of swarm, port `8546`
 Endpoint `ws://127.0.0.1:8546`
 
 ## Getting Started
+### Running Swarm
+In order to run swarm properly you need to run:
+```
+swarm.exe --bzzaccount <account> --ws --wsorigins "*"
+```
+
 ### Setting up
 Make sure you have installed the necessary dependencies using `yarn`:
 

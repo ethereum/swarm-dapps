@@ -42,7 +42,9 @@ class App extends Component {
   }
 
   async init() {
-    this.messenger = await new Messenger({ ws: this.props.ws });
+    this.messenger = new Messenger({ ws: this.props.ws });
+    await this.messenger.init();
+
     const { account } = this.messenger;
     const state = storage.get() || {};
 
@@ -83,14 +85,16 @@ class App extends Component {
     ];
 
     this.setState({ contacts: list }, this.saveState);
-    return sharedTopic;
   }
 
   async sendContactResponse(key, accepted) {
     const { contacts, chats } = this.state;
     const existing = contacts.find(c => c.key === key);
+    if (!existing) {
+      return;
+    }
 
-    await this.messenger.sendContactResponse(key, accepted, (existing || {}).address);
+    await this.messenger.sendContactResponse(key, accepted, existing.address);
 
     const contact = {
       ...existing,
@@ -219,14 +223,14 @@ class App extends Component {
     }, this.saveState);
   }
 
-  async onMessageSend(key, message) {
+  onMessageSend(key, message) {
     const { account, chats } = this.state;
     const chat = chats.find(c => c.key === key);
     if (!chat) {
       throw new Error('Chat is not found');
     }
 
-    await this.messenger.sendChatMessage(chat.key, chat.topic, { text: message });
+    this.messenger.sendChatMessage(chat.key, chat.topic, { text: message });
 
     const msg = {
       sender: account.publicKey,
