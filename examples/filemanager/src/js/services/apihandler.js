@@ -132,7 +132,7 @@
 
                 // if is_debug enabled you can use swarm via php proxy
                 if (getCookie('is_debug') == 1) {
-                    url = url.replace('/bzz:', '/proxy/bzz.php').replace('/bzzr:', '/proxy/bzzr.php');
+                    url = url.replace('/bzz:', '/proxy/bzz.php').replace('/bzz-raw:', '/proxy/bzzr.php');
                 }
 
                 return url;
@@ -523,7 +523,7 @@
                     key = '';
                 }
 
-                var url = this.fixUrl('/bzzr:/') + hash;
+                var url = this.fixUrl('/bzz-raw:/') + hash;
                 $http.get(url, {}).success(function (data) {
                     $.each(data.entries, function (k, v) {
                         var path = v.path;
