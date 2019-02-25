@@ -1,0 +1,85 @@
+/* .contentFieldForm, .ck-editor, .ck-editor__main{
+	height: 100% !important;
+} */
+
+/**
+ * { CKEDITOR }
+ */
+.ck-editor, .ck-editor-bottom {
+	border: 0 !important;
+}
+
+button:hover{
+	cursor: pointer !important;
+}
+
+body, html, main {
+	padding: 0 !important;
+}
+
+.ckeditor {
+	background: #fafafa;
+}
+
+	// Override d-app styles
+	::selection {
+		background-color: #3297FD  !important; /* WebKit/Blink Browsers */
+	}
+	::-moz-selection {
+		background-color: #3399FF !important; /* Gecko Browsers */
+	}
+
+/**
+ * { Markdown field }
+ */
+
+#markdownField{
+	display: none;
+	border: 0 !important;
+	width:100%;
+	padding-top: 1.5em;
+	box-sizing: content-box;
+	margin: 0 !important;
+	//height: 95vh !important;
+	background: #fafafa !important;
+	font: 100 16px 'Source Sans Pro', 'Helvetica Neue', arial, sans-serif !important;
+	color: #111 !important;
+	resize: none !important;
+}
+
+.textarea-container {
+	position: relative;
+}
+
+textarea, .textarea-size {
+	min-height: 25px;
+	font-family: sans-serif;
+	//font-size: 14px;
+	//box-sizing: border-box;
+	//padding: 4px;
+	border: 1px solid;
+	overflow: hidden;
+	width: 100%;
+}
+
+textarea {
+	height: 100%;
+	position: absolute;
+	resize:none;
+	white-space: normal;
+}
+
+.textarea-size {
+	visibility: hidden;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+/**
+ * { Misc }
+ */
+
+.hidden {
+	display: none;
+}
